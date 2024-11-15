@@ -57,4 +57,24 @@ public class LocadorDAO {
         }
         return locadores;
     }
+
+    public boolean isEmailCadastrado(String email) {
+        String sql = "SELECT 1 FROM locatarios WHERE email_locat = ?";
+        boolean existe = false;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email); // Configura o email no parâmetro da consulta
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Se o resultado tiver alguma linha, o email está cadastrado
+                existe = rs.next();
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao verificar email: " + e.getMessage());
+        }
+
+        return existe;
+    }
 }

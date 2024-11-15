@@ -88,4 +88,9 @@ public class Ferramenta {
                 ", cpf_locad='" + cpf_locad + '\'' +
                 '}';
     }
+
+    public boolean isCpfValido() {
+        return cpf_locad != null && cpf_locad.matches("\\d{11}");
+    }
+
 }

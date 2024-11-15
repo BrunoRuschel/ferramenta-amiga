@@ -55,4 +55,12 @@ public class Locatario {
                 ", senha='" + senha + '\'' +
                 '}';
     }
+
+    public boolean isCpfValido() {
+        return cpf != null && cpf.matches("\\d{11}");
+    }
+
+    public boolean isEmailValido() {
+        return email != null && email.matches("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$");
+    }
 }

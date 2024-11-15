@@ -55,4 +55,8 @@ public class Devolucao {
                 ", cpf_locat='" + cpf_locat + '\'' +
                 '}';
     }
+
+    public boolean isCpfValido() {
+        return cpf_locat != null && cpf_locat.matches("\\d{11}");
+    }
 }
