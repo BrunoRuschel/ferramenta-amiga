@@ -14,6 +14,8 @@ public class Aluguel {
         this.cpf_locat = cpf_locat;
     }
 
+    public Aluguel() {}
+
     public int getCod() {
         return coda;
     }

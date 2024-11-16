@@ -56,4 +56,54 @@ public class FerramentaDAO {
         }
         return ferramentas;
     }
+
+    public Ferramenta findById(int codf) {
+        String sql = "SELECT * FROM ferramentas WHERE codf = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, codf);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Ferramenta(
+                            rs.getInt("codf"),
+                            rs.getString("tipo"),
+                            rs.getString("marca"),
+                            rs.getFloat("preco"),
+                            rs.getString("estado"),
+                            rs.getString("statusf"),
+                            rs.getString("cpf_locad")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar ferramenta por ID: " + e.getMessage());
+        }
+        return null; // Retorna null caso a ferramenta não seja encontrada
+    }
+
+    public void mudarStatusFerramenta(int codf, String novoStatus) {
+        String sql = "UPDATE ferramentas SET statusf = ? WHERE codf = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Define os parâmetros para a atualização
+            stmt.setString(1, novoStatus); // Novo status
+            stmt.setInt(2, codf);           // Código da ferramenta
+
+            // Executa a atualização
+            int rowsUpdated = stmt.executeUpdate();
+
+            // Verifica se a atualização foi bem-sucedida
+            if (rowsUpdated > 0) {
+                System.out.println("Status da ferramenta atualizado com sucesso!");
+            } else {
+                System.out.println("Ferramenta não encontrada ou não foi possível atualizar o status.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar status da ferramenta: " + e.getMessage());
+        }
+    }
 }
