@@ -106,4 +106,70 @@ public class FerramentaDAO {
             System.err.println("Erro ao atualizar status da ferramenta: " + e.getMessage());
         }
     }
+
+    public List<Ferramenta> listarFerramentasDisponiveis() {
+        String sql = "SELECT codf, tipo, marca, preco, estado, statusf, cpf_locad " +
+                "FROM ferramentas " +
+                "WHERE UPPER(statusf) = UPPER(?)";
+        List<Ferramenta> ferramentasDisponiveis = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "Disponível");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Ferramenta ferramenta = new Ferramenta(
+                            rs.getInt("codf"),
+                            rs.getString("tipo"),
+                            rs.getString("marca"),
+                            rs.getFloat("preco"),
+                            rs.getString("estado"),
+                            rs.getString("statusf"),
+                            rs.getString("cpf_locad")
+                    );
+                    ferramentasDisponiveis.add(ferramenta);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar ferramentas disponíveis: " + e.getMessage());
+        }
+
+        return ferramentasDisponiveis;
+    }
+
+    public List<Ferramenta> listarFerramentasIndisponiveis() {
+        String sql = "SELECT codf, tipo, marca, preco, estado, statusf, cpf_locad " +
+                "FROM ferramentas " +
+                "WHERE UPPER(statusf) = UPPER(?)";
+        List<Ferramenta> ferramentasDisponiveis = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "Alugada");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Ferramenta ferramenta = new Ferramenta(
+                            rs.getInt("codf"),
+                            rs.getString("tipo"),
+                            rs.getString("marca"),
+                            rs.getFloat("preco"),
+                            rs.getString("estado"),
+                            rs.getString("statusf"),
+                            rs.getString("cpf_locad")
+                    );
+                    ferramentasDisponiveis.add(ferramenta);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar ferramentas disponíveis: " + e.getMessage());
+        }
+
+        return ferramentasDisponiveis;
+    }
 }

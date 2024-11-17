@@ -65,24 +65,30 @@ public class Main {
           //  }
 
         //Testes de autenticação
-        LocadorService locadorService = new LocadorService(locadorDAO);
-        try {
-            Locador locador2 = locadorService.autenticarLocador("martin@gmail.com", "tricolor");
-            System.out.println(locador2.toString());
-        }
-        catch (Exception e) {
-            System.out.println("Erro ao autenticar locador: " + e.getMessage());
-        }
+        //LocadorService locadorService = new LocadorService(locadorDAO);
+        //try {
+          //  Locador locador2 = locadorService.autenticarLocador("martin@gmail.com", "tricolor");
+          //  System.out.println(locador2.toString());
+        //}
+        //catch (Exception e) {
+        //    System.out.println("Erro ao autenticar locador: " + e.getMessage());
+        //}
 
 
-        LocatarioDAO locatarioDAO = new LocatarioDAO();
-        LocatarioService locatarioService = new LocatarioService(locatarioDAO);
-        try {
-            Locatario locatario = locatarioService.autenticarLocatario("ana.oliveira@email.com", "senha321");
-            System.out.println(locatario.toString());
-        }
-        catch (Exception e) {
-            System.out.println("Erro ao autenticar locatario: " + e.getMessage());
+        //LocatarioDAO locatarioDAO = new LocatarioDAO();
+       // LocatarioService locatarioService = new LocatarioService(locatarioDAO);
+       // try {
+        //    Locatario locatario = locatarioService.autenticarLocatario("ana.oliveira@email.com", "senha321");
+          //  System.out.println(locatario.toString());
+      //  }
+       // catch (Exception e) {
+        //    System.out.println("Erro ao autenticar locatario: " + e.getMessage());
+        //}
+
+
+        List<Ferramenta> indisponiveis = ferramentaDAO.listarFerramentasIndisponiveis();
+        for (int i = 0; i < indisponiveis.size(); i++) {
+            System.out.println(indisponiveis.get(i));
         }
 
 

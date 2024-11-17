@@ -31,5 +31,4 @@ public class FerramentaService {
         // insere a ferramenta no banco de dados
         ferramentaDAO.inserirFerramenta(ferramenta);
     }
-
 }
