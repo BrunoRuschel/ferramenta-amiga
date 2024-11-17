@@ -4,6 +4,8 @@ import dao.FerramentaDAO;
 import dao.LocadorDAO;
 import model.Ferramenta;
 
+import java.util.List;
+
 public class FerramentaService {
 
     private final FerramentaDAO ferramentaDAO;
@@ -30,5 +32,13 @@ public class FerramentaService {
 
         // insere a ferramenta no banco de dados
         ferramentaDAO.inserirFerramenta(ferramenta);
+    }
+
+    public List<Ferramenta> listarFerramentasDisponiveis() {
+        return ferramentaDAO.listarFerramentasDisponiveis();
+    }
+
+    public List<Ferramenta> listarFerramentasIndisponiveis() {
+        return ferramentaDAO.listarFerramentasIndisponiveis();
     }
 }
