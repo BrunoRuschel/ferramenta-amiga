@@ -1,10 +1,14 @@
 import dao.AluguelDAO;
 import dao.FerramentaDAO;
 import dao.LocadorDAO;
+import dao.LocatarioDAO;
 import model.Ferramenta;
 import model.Locador;
+import model.Locatario;
 import service.AluguelService;
+import service.FerramentaService;
 import service.LocadorService;
+import service.LocatarioService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +38,54 @@ public class Main {
         AluguelService aluguelService = new AluguelService(aluguelDAO, ferramentaDAO);
 
         // Testando o aluguel de ferramenta
-        try {
-            aluguelService.alugarFerramenta(1, "45678901234");  // Alugando a ferramenta
-            System.out.println("Aluguel realizado com sucesso!");
+        //try {
+            //aluguelService.alugarFerramenta(1, "45678901234");  // Alugando a ferramenta
+           // System.out.println("Aluguel realizado com sucesso!");
 
             // Verificando se o status da ferramenta foi atualizado para "ALUGADA"
-            Ferramenta ferramentaAtualizada = ferramentaDAO.findById(1);
-            System.out.println("Status da ferramenta após aluguel: " + ferramentaAtualizada.getStatus());
-        } catch (Exception e) {
-            System.out.println("Erro ao realizar aluguel: " + e.getMessage());
+            //Ferramenta ferramentaAtualizada = ferramentaDAO.findById(1);
+            //System.out.println("Status da ferramenta após aluguel: " + ferramentaAtualizada.getStatus());
+       // } catch (Exception e) {
+        //    System.out.println("Erro ao realizar aluguel: " + e.getMessage());
+        //}
+
+        //Testando oferecer ferramenta
+        LocadorDAO locadorDAO = new LocadorDAO();
+        //Locador locador1 = new Locador("21136549654", "martin brathwaite", "martin@gmail.com", "tricolor", "humaita");
+
+        //Ferramenta martelo = new Ferramenta(8965, "martelo", "tramontina", 5.0F, "nova", "DISPONIVEL", "21136549654");
+
+        //FerramentaService ferramentaService = new FerramentaService(ferramentaDAO, locadorDAO);
+        //try {
+         //   ferramentaService.ofertarFerramenta(martelo);
+         //   System.out.println("Ferramenta ofertada com sucesso!");
+
+         //    } catch (Exception e) {
+          //      System.out.println("Erro ao realizar aluguel: " + e.getMessage());
+          //  }
+
+        //Testes de autenticação
+        LocadorService locadorService = new LocadorService(locadorDAO);
+        try {
+            Locador locador2 = locadorService.autenticarLocador("martin@gmail.com", "tricolor");
+            System.out.println(locador2.toString());
         }
+        catch (Exception e) {
+            System.out.println("Erro ao autenticar locador: " + e.getMessage());
+        }
+
+
+        LocatarioDAO locatarioDAO = new LocatarioDAO();
+        LocatarioService locatarioService = new LocatarioService(locatarioDAO);
+        try {
+            Locatario locatario = locatarioService.autenticarLocatario("ana.oliveira@email.com", "senha321");
+            System.out.println(locatario.toString());
+        }
+        catch (Exception e) {
+            System.out.println("Erro ao autenticar locatario: " + e.getMessage());
+        }
+
+
     }
 
 }

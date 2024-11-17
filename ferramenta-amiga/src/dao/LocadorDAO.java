@@ -77,4 +77,52 @@ public class LocadorDAO {
 
         return existe;
     }
+
+    public boolean isLocadorCadastrado(String cpfLocador) {
+        String sql = "SELECT 1 FROM locadores WHERE cpf_locad = ?";
+        boolean existe = false;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpfLocador);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                existe = rs.next();
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao verificar locador pelo CPF: " + e.getMessage());
+        }
+
+        return existe;
+    }
+
+    public Locador buscarLocadorPorEmail(String email) {
+        String sql = "SELECT cpf_locad, nome_locad, email_locad, senha, endereco FROM locadores WHERE email_locad = ?";
+        Locador locador = null;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    locador = new Locador(
+                            rs.getString("cpf_locad"),
+                            rs.getString("nome_locad"),
+                            rs.getString("email_locad"),
+                            rs.getString("senha"),
+                            rs.getString("endereco")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar locador pelo email: " + e.getMessage());
+        }
+
+        return locador;
+    }
 }

@@ -1,5 +1,6 @@
 package dao;
 
+import model.Locador;
 import model.Locatario;
 import util.DatabaseConnection;
 
@@ -69,5 +70,32 @@ public class LocatarioDAO {
         }
 
         return existe;
+    }
+
+    public Locatario buscarLocatarioPorEmail(String email) {
+        String sql = "SELECT cpf_locat, nome_locat, email_locat, senha FROM locatarios WHERE email_locat = ?";
+        Locatario locatario = null;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    locatario = new Locatario(
+                            rs.getString("cpf_locat"),
+                            rs.getString("nome_locat"),
+                            rs.getString("email_locat"),
+                            rs.getString("senha")
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao buscar locatario pelo email: " + e.getMessage());
+        }
+
+        return locatario;
     }
 }

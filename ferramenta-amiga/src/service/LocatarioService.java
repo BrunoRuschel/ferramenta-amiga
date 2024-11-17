@@ -28,4 +28,18 @@ public class LocatarioService {
 
         locatarioDAO.inserirLocatario(locatario);
     }
+
+    public Locatario autenticarLocatario(String email, String senha) {
+        Locatario locatario = locatarioDAO.buscarLocatarioPorEmail(email);
+
+        if(locatario ==  null) {
+            throw new IllegalArgumentException("Usuario nao encontrado.");
+        }
+
+        if (!locatario.getSenha().equals(senha)) {
+            throw new IllegalArgumentException("Senha incorreta.");
+        }
+
+        return locatario;
+    }
 }

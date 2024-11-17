@@ -11,6 +11,7 @@ public class LocadorService {
         this.locadorDAO = locadorDAO;
     }
 
+
     public void cadastrarLocador(Locador locador) {
         if (locador == null) {
             throw new IllegalArgumentException("Locador não pode ser nulo.");
@@ -26,5 +27,19 @@ public class LocadorService {
         }
 
         locadorDAO.inserirLocador(locador);
+    }
+
+    public Locador autenticarLocador(String email, String senha) {
+        Locador locador = locadorDAO.buscarLocadorPorEmail(email);
+
+        if(locador ==  null) {
+            throw new IllegalArgumentException("Usuário não encontrado.");
+        }
+
+        if (!locador.getSenha().equals(senha)) {
+            throw new IllegalArgumentException("Senha incorreta.");
+        }
+
+        return locador;
     }
 }
