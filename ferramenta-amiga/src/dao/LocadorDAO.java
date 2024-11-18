@@ -1,7 +1,7 @@
 package dao;
 
 import model.Locador;
-import util.DatabaseConnection;
+import database.DatabaseConnection;
 
 import javax.swing.*;
 import java.sql.Connection;

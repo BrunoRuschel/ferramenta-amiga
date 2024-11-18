@@ -1,7 +1,7 @@
 package dao;
 
 import model.Aluguel;
-import util.DatabaseConnection;
+import database.DatabaseConnection;
 import java.sql.Date;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

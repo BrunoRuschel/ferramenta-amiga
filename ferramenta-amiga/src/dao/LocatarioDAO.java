@@ -1,8 +1,7 @@
 package dao;
 
-import model.Locador;
 import model.Locatario;
-import util.DatabaseConnection;
+import database.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

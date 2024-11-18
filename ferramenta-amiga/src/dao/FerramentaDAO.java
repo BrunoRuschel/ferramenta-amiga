@@ -1,7 +1,7 @@
 package dao;
 
 import model.Ferramenta;
-import util.DatabaseConnection;
+import database.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
