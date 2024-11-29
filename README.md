@@ -1,4 +1,4 @@
-# fs-nasa-cfs-mission-v0
+# Ferramente-Fácil
 Esse repositório contém o código fonte da aplicação Ferramente-Fácil.
 Java deve estar instalado antes de seguir as etapas de build.
 
