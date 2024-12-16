@@ -40,6 +40,7 @@ public class GUIMain extends Application {
     private static LocadorService locadorService = new LocadorService(locadorDAO);
     private static DevolucaoDAO devolucaoDAO = new DevolucaoDAO();
     private static FerramentaDAO ferramentaDAO = new FerramentaDAO();
+    private static FerramentaService ferramentaService = new FerramentaService(ferramentaDAO, locadorDAO);
     private DevolucaoService devolucaoService = new DevolucaoService(devolucaoDAO, ferramentaDAO);
     private static final Scanner scanner = new Scanner(System.in);
     private VBox createItemBox(Ferramenta ferramenta, Stage stage) {
@@ -53,6 +54,7 @@ public class GUIMain extends Application {
         Label tipoLabel = new Label("Status: " + ferramenta.getStatus());
         Label descricaoLabel = new Label("Marca: " + ferramenta.getMarca());
         Label precoLabel = new Label("Preco: " + ferramenta.getPreco());
+        Label estadoLabel = new Label("Estado: " + ferramenta.getEstado());
         Locador loc = null;
         try{
             loc = locadorService.buscarPorCPF(ferramenta.getCpf_locad());
@@ -62,7 +64,7 @@ public class GUIMain extends Application {
         Label enederecoLabel = new Label("Endereco: " + loc.getEndereco());
 
 
-        itemBox.getChildren().addAll(nomeLabel, tipoLabel, descricaoLabel, precoLabel, enederecoLabel);
+        itemBox.getChildren().addAll(nomeLabel, tipoLabel, descricaoLabel, precoLabel, enederecoLabel, estadoLabel);
 
         itemBox.setOnMouseClicked(event -> showDetailScreen(stage, ferramenta));
 
@@ -622,19 +624,30 @@ public class GUIMain extends Application {
         } else {
             // Adiciona cada ferramenta com createItemBox
             for (Ferramenta ferramenta : rentedTools) {
-                if(ferramenta.getStatus().equals("ALUGADA") || ferramenta.getStatus().equals("Alugada")) {
+                if (ferramenta.getStatus().equalsIgnoreCase("ALUGADA")) {
                     VBox itemBox = createItemBox(ferramenta, stage);
 
-                    // Adiciona botão de devolver dentro do itemBox
-                    Button returnButton = new Button("Devolver");
+                    // Campo para atualizar o estado
+                    TextField estadoField = new TextField();
+                    estadoField.setPromptText("Digite o estado da ferramenta");
+
+                    // Botão de devolver
+                    Button returnButton = new Button("Confirmar Devolucaoo");
                     returnButton.setOnAction(e -> {
-                        devolucaoService.devolverFerramenta(ferramenta.getCodf(), locatario.getCpf());
-                        showMessage("Sucesso!", "Ferramenta " + ferramenta.getTipo() + " foi devolvida!");
-                        stage.setScene(createLocatarioDashboardScene(stage, locatario)); // Atualiza a cena
+                        String estadoAtualizado = estadoField.getText().trim();
+                        if (estadoAtualizado.isEmpty()) {
+                            showMessage("Erro", "Por favor, insira o estado da ferramenta antes de devolver.");
+                        } else {
+                            ferramenta.setEstado(estadoAtualizado);
+                            ferramentaDAO.mudarEstadoFerramenta(ferramenta.getCodf(), ferramenta.getEstado());
+                            devolucaoService.devolverFerramenta(ferramenta.getCodf(), locatario.getCpf());
+                            showMessage("Sucesso!", "Ferramenta " + ferramenta.getTipo() + " foi devolvida!");
+                            stage.setScene(createLocatarioDashboardScene(stage, locatario)); // Atualiza a cena
+                        }
                     });
 
-                    // Adiciona botão ao itemBox
-                    itemBox.getChildren().add(returnButton);
+                    // Adiciona os elementos ao itemBox
+                    itemBox.getChildren().addAll(new Label("Atualizar Estado:"), estadoField, returnButton);
                     mainLayout.getChildren().add(itemBox);
                 }
             }
@@ -694,7 +707,7 @@ public class GUIMain extends Application {
         // Botão para anunciar ferramenta
         Button announceToolButton = new Button("Anunciar ferramenta");
         announceToolButton.setStyle("-fx-font-size: 16px; -fx-padding: 10;");
-        announceToolButton.setOnAction(e -> stage.setScene(createLocadorDashboardScene(stage, locador)));
+        announceToolButton.setOnAction(e -> stage.setScene(createAnnounceToolScene(stage, locador)));
 
         // Botão para ver ferramentas anunciadas
         Button viewAnnouncedToolsButton = new Button("Ver ferramentas anunciadas");
@@ -742,15 +755,15 @@ public class GUIMain extends Application {
                         Color.GRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT
                 )));
 
-                Label nomeLabel = new Label("Nome: " + ferramenta.getTipo());
+                Label nomeLabel = new Label("Tipo: " + ferramenta.getTipo());
                 Label tipoLabel = new Label("Status: " + ferramenta.getStatus());
                 Label descricaoLabel = new Label("Marca: " + ferramenta.getMarca());
                 Label precoLabel = new Label("Preco: R$ " + String.format("%.2f", ferramenta.getPreco()));
-                Locador loc = null;
                 Label enderecoLabel = new Label("Endereco: " + locador.getEndereco());
+                Label estadoLabel = new Label("Estado: " + ferramenta.getEstado());
 
                 // Adiciona os detalhes da ferramenta ao VBox
-                toolBox.getChildren().addAll(nomeLabel, tipoLabel, descricaoLabel, precoLabel, enderecoLabel);
+                toolBox.getChildren().addAll(nomeLabel, tipoLabel, descricaoLabel, precoLabel, enderecoLabel, estadoLabel);
 
                 // Adiciona o VBox da ferramenta à lista
                 toolsLayout.getChildren().add(toolBox);
@@ -766,6 +779,77 @@ public class GUIMain extends Application {
         toolsLayout.getChildren().add(backButton);
 
         return new Scene(toolsLayout, 400, 600);
+    }
+
+    private Scene createAnnounceToolScene(Stage stage, Locador locador) {
+        VBox mainLayout = new VBox(10);
+        mainLayout.setPadding(new Insets(10));
+        mainLayout.setStyle("-fx-background-color: #ffffff;");
+
+        // Título da tela
+        Label titleLabel = new Label("Anunciar Nova Ferramenta");
+        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        // Campos para preenchimento
+        TextField tipoField = new TextField();
+        tipoField.setPromptText("Digite o tipo da ferramenta");
+
+        TextField marcaField = new TextField();
+        marcaField.setPromptText("Digite a marca da ferramenta");
+
+        TextField precoField = new TextField();
+        precoField.setPromptText("Digite o preco da ferramenta");
+
+        TextField estadoField = new TextField();
+        estadoField.setPromptText("Digite o estado da ferramenta");
+
+        // Botão para salvar o anúncio
+        Button saveButton = new Button("Salvar Anuncio");
+        saveButton.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
+        saveButton.setOnAction(e -> {
+            String tipo = tipoField.getText().trim();
+            String marca = marcaField.getText().trim();
+            String precoStr = precoField.getText().trim();
+            String estado = estadoField.getText().trim();
+
+            if (tipo.isEmpty() || marca.isEmpty() || precoStr.isEmpty() || estado.isEmpty()) {
+                showAlert("Erro", "Por favor, preencha todos os campos.");
+                return;
+            }
+
+            float preco;
+            try {
+                preco = Float.parseFloat(precoStr);
+            } catch (NumberFormatException ex) {
+                showMessage("Erro", "O preco deve ser um numero valido.");
+                return;
+            }
+
+            // Cria a ferramenta e salva no banco
+            Ferramenta novaFerramenta = new Ferramenta((int)(Math.random() * 10000), tipo, marca, preco, estado, "DISPONIVEL", locador.getCpf());
+            ferramentaService.ofertarFerramenta(novaFerramenta);
+
+            showMessage("Sucesso!", "Ferramenta anunciada com sucesso!");
+            stage.setScene(createLocadorDashboardScene(stage, locador)); // Retorna ao painel do locador
+        });
+
+        // Botão para voltar
+        Button backButton = new Button("Voltar");
+        backButton.setStyle("-fx-font-size: 14px; -fx-padding: 10;");
+        backButton.setOnAction(e -> stage.setScene(createLocadorDashboardScene(stage, locador)));
+
+        // Adiciona os componentes ao layout principal
+        mainLayout.getChildren().addAll(
+                titleLabel,
+                new Label("Tipo:"), tipoField,
+                new Label("Marca:"), marcaField,
+                new Label("Preco:"), precoField,
+                new Label("Estado:"), estadoField,
+                saveButton,
+                backButton
+        );
+
+        return new Scene(mainLayout, 400, 500);
     }
 
 
