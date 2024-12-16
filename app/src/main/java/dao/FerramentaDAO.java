@@ -107,6 +107,31 @@ public class FerramentaDAO {
         }
     }
 
+    public void mudarEstadoFerramenta(int codf, String novoEstado) {
+        String sql = "UPDATE ferramentas SET estado = ? WHERE codf = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Define os parâmetros para a atualização
+            stmt.setString(1, novoEstado); // Novo status
+            stmt.setInt(2, codf);           // Código da ferramenta
+
+            // Executa a atualização
+            int rowsUpdated = stmt.executeUpdate();
+
+            // Verifica se a atualização foi bem-sucedida
+            if (rowsUpdated > 0) {
+                System.out.println("Status da ferramenta atualizado com sucesso!");
+            } else {
+                System.out.println("Ferramenta não encontrada ou não foi possível atualizar o status.");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar status da ferramenta: " + e.getMessage());
+        }
+    }
+
     public List<Ferramenta> listarFerramentasDisponiveis() {
         String sql = "SELECT codf, tipo, marca, preco, estado, statusf, cpf_locad " +
                 "FROM ferramentas " +
